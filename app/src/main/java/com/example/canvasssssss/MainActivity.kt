@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -46,6 +48,26 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var canvasWidth by remember { mutableStateOf(0f) }
     var canvasHeight by remember { mutableStateOf(0f) }
 
+    var imageX by remember { mutableStateOf(100f) }
+    var imageY by remember { mutableStateOf(300f) }
+
+    LaunchedEffect(Unit) {
+        var lastTime = 0L
+        while (true) {
+            withFrameMillis { frameTime ->
+                if (lastTime != 0L) {
+                    val dt = (frameTime - lastTime) / 1000f
+                    imageX += 100f * dt
+
+                    if (imageX > 1080f) {
+                        imageX = -200f
+                    }
+                }
+                lastTime = frameTime
+            }
+        }
+    }
+
     val minionsImage: ImageBitmap = ImageBitmap.imageResource(id = R.drawable.minions)
 
     Box(
@@ -76,13 +98,7 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 strokeWidth = 10f
             )
 
-            val minionsWidth = minionsImage.width
-            val minionsHeight = minionsImage.height
-
-            val offsetX = (size.width - minionsWidth) / 2f
-            val offsetY = (size.height - minionsHeight) / 2f
-
-            translate(offsetX, offsetY) {
+            translate(imageX, imageY) {
                 drawImage(minionsImage)
             }
         }
