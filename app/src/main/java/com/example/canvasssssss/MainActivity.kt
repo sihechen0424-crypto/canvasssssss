@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.dp
 import com.example.canvasssssss.ui.theme.CanvasssssssTheme
 
 class MainActivity : ComponentActivity() {
@@ -50,20 +53,23 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
 
     var imageX by remember { mutableStateOf(100f) }
     var imageY by remember { mutableStateOf(300f) }
+    var isAnimating by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        var lastTime = 0L
-        while (true) {
-            withFrameMillis { frameTime ->
-                if (lastTime != 0L) {
-                    val dt = (frameTime - lastTime) / 1000f
-                    imageX += 100f * dt
+    LaunchedEffect(isAnimating) {
+        if (isAnimating) {
+            var lastTime = 0L
+            while (isAnimating) {
+                withFrameMillis { frameTime ->
+                    if (lastTime != 0L) {
+                        val dt = (frameTime - lastTime) / 1000f
+                        imageX += 100f * dt
 
-                    if (imageX > 1080f) {
-                        imageX = -200f
+                        if (imageX > 1080f) {
+                            imageX = -200f
+                        }
                     }
+                    lastTime = frameTime
                 }
-                lastTime = frameTime
             }
         }
     }
@@ -102,6 +108,15 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 drawImage(minionsImage)
             }
         }
-        Text("畫布寬度 $canvasWidth, 長度 $canvasHeight")
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("畫布寬度 $canvasWidth, 長度 $canvasHeight")
+
+            Button(onClick = { isAnimating = !isAnimating }) {
+                Text(if (isAnimating) "停止移動" else "開始移動")
+            }
+        }
     }
 }
