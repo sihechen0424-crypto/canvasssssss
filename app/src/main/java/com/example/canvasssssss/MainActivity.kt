@@ -51,8 +51,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var canvasWidth by remember { mutableStateOf(0f) }
     var canvasHeight by remember { mutableStateOf(0f) }
 
-    var imageX by remember { mutableStateOf(50f) }
-    var imageY by remember { mutableStateOf(50f) }
+    var imageX by remember { mutableStateOf(0f) }
+    var imageY by remember { mutableStateOf(0f) }
     var isAnimating by remember { mutableStateOf(false) }
 
     LaunchedEffect(isAnimating) {
@@ -66,9 +66,11 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                         imageX += 150f * dt
                         imageY += 150f * dt
 
-                        if (imageX > 1080f || imageY > 2200f) {
-                            imageX = -200f
-                            imageY = -200f
+                        if (canvasWidth > 0f && canvasHeight > 0f) {
+                            if (imageX > canvasWidth || imageY > canvasHeight) {
+                                imageX = 0f
+                                imageY = 0f
+                            }
                         }
                     }
                     lastTime = frameTime
