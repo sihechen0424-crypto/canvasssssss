@@ -51,8 +51,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
     var canvasWidth by remember { mutableStateOf(0f) }
     var canvasHeight by remember { mutableStateOf(0f) }
 
-    var imageX by remember { mutableStateOf(100f) }
-    var imageY by remember { mutableStateOf(300f) }
+    var imageX by remember { mutableStateOf(50f) }
+    var imageY by remember { mutableStateOf(50f) }
     var isAnimating by remember { mutableStateOf(false) }
 
     LaunchedEffect(isAnimating) {
@@ -62,10 +62,13 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 withFrameMillis { frameTime ->
                     if (lastTime != 0L) {
                         val dt = (frameTime - lastTime) / 1000f
-                        imageX += 100f * dt
 
-                        if (imageX > 1080f) {
+                        imageX += 150f * dt
+                        imageY += 150f * dt
+
+                        if (imageX > 1080f || imageY > 2200f) {
                             imageX = -200f
+                            imageY = -200f
                         }
                     }
                     lastTime = frameTime
